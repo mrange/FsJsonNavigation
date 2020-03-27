@@ -48,16 +48,16 @@ module JsonNavigate  =
 
   let jnvalue je m t : Result<'T, _> =
     jnelement je t
-    |> Result.map m
+    |> Result.bind m
 
   let jnstring    je t = jnvalue je (function Json.String v -> Ok v    | j -> Error (JsonNavigationFailure.NotConvertibleTo ([], j.Type, JsonType.String))) t
   let jnnumber    je t = jnvalue je (function Json.Number v -> Ok v    | j -> Error (JsonNavigationFailure.NotConvertibleTo ([], j.Type, JsonType.Number))) t
   let jnbool      je t = jnvalue je (function Json.Bool   v -> Ok v    | j -> Error (JsonNavigationFailure.NotConvertibleTo ([], j.Type, JsonType.Bool  ))) t
 
-  let jnisNull    je t = jnvalue je (fun j -> not j.IsNotNull ) t
-  let jnisNotNull je t = jnvalue je (fun j -> j.IsNotNull     ) t
-  let jnisTruthy  je t = jnvalue je (fun j -> j.IsTruthy      ) t
-  let jnisFalsy   je t = jnvalue je (fun j -> j.IsFalsy       ) t
+  let jnisNull    je t = jnvalue je (fun j -> Ok <| not j.IsNotNull ) t
+  let jnisNotNull je t = jnvalue je (fun j -> Ok <| j.IsNotNull     ) t
+  let jnisTruthy  je t = jnvalue je (fun j -> Ok <| j.IsTruthy      ) t
+  let jnisFalsy   je t = jnvalue je (fun j -> Ok <| j.IsFalsy       ) t
 
   let jnindex idx t = 
     let t = adapt3 t
